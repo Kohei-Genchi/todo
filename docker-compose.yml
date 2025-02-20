@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   nginx:
-    image: nginx:1.21.1
+    image: nginx:alpine  # Changed to alpine which has better ARM support
+    platform: linux/arm64
     ports:
       - "80:80"
     volumes:
@@ -13,11 +12,13 @@ services:
 
   php:
     build: ./docker/php
+    platform: linux/arm64
     volumes:
       - ./src:/var/www/
 
   mysql:
-    image: mysql:8.0.26
+    image: mysql:8.0
+    platform: linux/arm64
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: laravel_db
@@ -30,7 +31,8 @@ services:
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:latest
+    platform: linux/amd64  # PhpMyAdmin doesn't have an official ARM image, using emulation
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
